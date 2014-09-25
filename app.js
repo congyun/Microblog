@@ -36,6 +36,9 @@ app.post('/reg',routes);
 app.get('/login', routes);
 app.post('/login', routes);
 app.get('/logout', routes);
+app.get('/current', routes);
+app.get('/past', routes);
+app.get('/rules', routes);
 
 //End of logic code
 
