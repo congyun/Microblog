@@ -1,23 +1,14 @@
-<div class="hero-unit">
-  <h1>Welcome to DotA2 Mafia</h1>
-  <p>DotA2 Mafia is an online strategy game with DotA2 characters, in memory of the forum version Mafia
-  Game I played in college.</p>
-  <p>
-    <a class="btn btn-primary btn-large" href="/login">Sign in</a>
-    <a class="btn btn-large" href="/reg">Sign up Now!</a>
-  </p>
-</div>
-<div class="row">
-  <div class="span4">
-    <h2>Purge says</h2>
-    <p>Fresh meat!</p>
+
+<% if (!user) { %>
+  <div class="hero-unit">
+    <h1>Welcome to DotA 2 Mafia</h1>
+    <p>DotA 2 Mafia is based on Node.js</p>
+    <p>
+      <a class="btn btn-primary btn-large" href="/login">Sign in</a>
+      <a class="btn btn-large" href="/reg">Sign up</a>
+    </p>
   </div>
-  <div class="span4">
-    <h2>Ogre Magi says</h2>
-    <p> They picked me! No one ever picks me.</p>
-  </div>
-  <div class="span4">
-    <h2>Lina says</h2>
-    <p>Extinguished.</p>
-  </div>
-</div>
+<% } else { %>
+   <%- partial('say') %> 
+<% } %>
+<%- partial('posts', {posts:posts}) %> 

@@ -1,44 +1,66 @@
+/**
+ * Module dependencies.
+ */
+
 var express = require('express');
+var http = require('http');
 var path = require('path');
 var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var expressLayouts = require("express-ejs-layouts");
-
-var routes = require('./routes/index');
-var users = require('./routes/users');
-
+var partials = require('express-partials');
+var session = require('express-session');
+var MongoStore = require('connect-mongo')(session);
+var flash = require('connect-flash');
+var settings = require('./settings');
+var routes = require('./routes');
 var app = express();
 
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
+app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(__dirname + '/public/favicon.ico'));
+app.use(partials());
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(flash());
 app.use(expressLayouts);
+app.use(session({
+    secret: settings.cookieSecret,
+    store: new MongoStore({
+      db: settings.db
+    }),
+    resave: true,
+    saveUninitialized: true
+}));
 
+app.use(express.static(path.join(__dirname, 'public')));
 
+app.get('/', routes.index);
+app.get('/u/:user', routes.user);
 
-// Logic code
-app.use('/', routes);
-app.use('/users', users);
-app.post('/post', routes);
-app.get('/u/:user', routes);
-app.get('/reg', routes);
-app.post('/reg',routes);
-app.get('/login', routes);
-app.post('/login', routes);
-app.get('/logout', routes);
-app.get('/current', routes);
-app.get('/past', routes);
-app.get('/rules', routes);
+app.post('/post', routes.checkLogin);
+app.post('/post', routes.post);
+
+app.get('/reg', routes.checkNotLogin);
+app.get('/reg', routes.reg);
+
+app.post('/reg', routes.checkNotLogin);
+app.post('/reg', routes.doReg);
+
+app.get('/login', routes.checkNotLogin);
+app.get('/login', routes.login);
+
+app.post('/login', routes.checkNotLogin);
+app.post('/login', routes.doLogin);
+
+app.get('/logout', routes.checkLogin);
+app.get('/logout', routes.logout);
 
 //End of logic code
 
@@ -72,7 +94,5 @@ app.use(function(err, req, res, next) {
         error: {}
     });
 });
-
-
 
 module.exports = app;
